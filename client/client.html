@@ -6,12 +6,16 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
-       let type;
-       let responseXML = '<response>';
- const handleResponse = (xhr ) => {
+       
+       let responseXML2 = '<response>';
+ const handleResponse = (xhr) => {
+   
+   const type2 = xhr.getResponseHeader('content-type');
       const content = document.querySelector('#content');
       const obj = JSON.parse(xhr.response);
-      if(type === 'application/json'){
+      console.log(type2);
+      
+      if(type2 === 'application/json'){
       switch(xhr.status) {
         case 200: //if success
           content.innerHTML = `<b>Success!</b>`;
@@ -41,57 +45,89 @@
       
       content.innerHTML += `<p>${obj.message}</p>`;
     }
-    if(type === 'text/xml'){
+    if(type2 === 'text/xml'){
       switch(xhr.status) {
         case 200: //if success
-        
-        responseXML = `${responseXML} <status>Success!</status>`;
-        responseXML = `${responseXML} </response>`;
-          content.innerHTML = `<b>${responseXML}</b>`;
+          content.innerHTML = `<b>Success!</b>`;
           break;
         case 400: //if bad request
-        
-        responseXML = `${responseXML} <status>Bad Request!</status>`;
-        responseXML = `${responseXML} </response>`;
-          content.innerHTML = `<b>${responseXML}</b>`;
+          content.innerHTML = `<b>Bad Request!</b>`;
           break;
         case 401: //if unauthorized
-    
-        responseXML = `${responseXML} <status>Unauthorized!</status>`;
-        responseXML = `${responseXML} </response>`;
-          content.innerHTML = `<b>${responseXML}</b>`;
+          content.innerHTML = `<b>Unauthorized!</b>`;
           break;
         case 403: //if forbidden
- 
-        responseXML = `${responseXML} <status>Forbidden!</status>`;
-        responseXML = `${responseXML} </response>`;
-        content.innerHTML = `<b>${responseXML}</b>`;
+          content.innerHTML = `<b>Forbidden!</b>`;
           break;
         case 501: //if not implemented
-
-        responseXML = `${responseXML} <status>Not Implemented!</status>`;
-        responseXML = `${responseXML} </response>`;
-        content.innerHTML = `<b>${responseXML}</b>`;
+          content.innerHTML = `<b>Not Implemented!</b>`;
           break;
         case 500: //if internal
-
-        responseXML = `${responseXML} <status>Internal Error!</status>`;
-        responseXML = `${responseXML} </response>`;
-        content.innerHTML = `<b>${responseXML}</b>`;
+          content.innerHTML = `<b>Internal Error!</b>`;
           break;
           case 404: //if not found
-
-        responseXML = `${responseXML} <status>Resource Not Found!</status>`;
-        responseXML = `${responseXML} </response>`;
-        content.innerHTML = `<b>${responseXML}</b>`;
+          content.innerHTML = `<b>Resource Not Found!</b>`;
           break;
         default: //any other status
-
-        responseXML = `${responseXML} <status>Error code not implemented by client!</status>`;
-        responseXML = `${responseXML} </response>`;
-        content.innerHTML = `<b>${responseXML}</b>`;
+          content.innerHTML = `<b>Error code not implemented by client!</b>`;
           break;
       }
+      
+      const message = xhr.response.querySelector('message');
+        const id = xhr.response.querySelector('id');
+
+        content.innerHTML = `<b>${id}, ${message}</b>`;
+    //   switch(xhr.status) {
+    //     case 200: //if success
+        
+    //     responseXML2 = `${responseXML2} <status>Success!</status>`;
+    //     responseXML2 = `${responseXML2} </response>`;
+    //       content.innerHTML = `<b>${responseXML2}</b>`;
+    //       break;
+    //     case 400: //if bad request
+        
+    //     responseXML2 = `${responseXML2} <status>Bad Request!</status>`;
+    //     responseXML2 = `${responseXML2} </response>`;
+    //       content.innerHTML = `<b>${responseXML2}</b>`;
+    //       break;
+    //     case 401: //if unauthorized
+    
+    //     responseXML2 = `${responseXML2} <status>Unauthorized!</status>`;
+    //     responseXML2 = `${responseXML2} </response>`;
+    //       content.innerHTML = `<b>${responseXML2}</b>`;
+    //       break;
+    //     case 403: //if forbidden
+ 
+    //     responseXML2 = `${responseXML2} <status>Forbidden!</status>`;
+    //     responseXML2 = `${responseXML2} </response>`;
+    //     content.innerHTML = `<b>${responseXML2}</b>`;
+    //       break;
+    //     case 501: //if not implemented
+
+    //     responseXML2 = `${responseXML2} <status>Not Implemented!</status>`;
+    //     responseXML2 = `${responseXML2} </response>`;
+    //     content.innerHTML = `<b>${responseXML2}</b>`;
+    //       break;
+    //     case 500: //if internal
+
+    //     responseXML2 = `${responseXML2} <status>Internal Error!</status>`;
+    //     responseXML2 = `${responseXML2} </response>`;
+    //     content.innerHTML = `<b>${responseXML2}</b>`;
+    //       break;
+    //       case 404: //if not found
+
+    //     responseXML2 = `${responseXML2} <status>Resource Not Found!</status>`;
+    //     responseXML2 = `${responseXML2} </response>`;
+    //     content.innerHTML = `<b>${responseXML2}</b>`;
+    //       break;
+    //     default: //any other status
+
+    //     responseXML2 = `${responseXML2} <status>Error code not implemented by client!</status>`;
+    //     responseXML2 = `${responseXML2} </response>`;
+    //     content.innerHTML = `<b>${responseXML2}</b>`;
+    //       break;
+    //   }
+    //   content.innerHTML += `<p>${obj.responseXML}</p>`;
     }
     };
 
@@ -100,7 +136,7 @@
       const xhr = new XMLHttpRequest();
       xhr.open('GET', url);
       xhr.setRequestHeader ("Accept", acceptedType);
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      //xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
        xhr.onload = () => handleResponse(xhr);
       
       //  const formData = `?valid=true`;
@@ -111,8 +147,10 @@
     };
 
     const init = () => {
-
+      let type;
       const sendButton = document.querySelector("#send");
+      
+     
       document.querySelector("#type").onchange = (e) => {
         type = e.target.value;
       }
@@ -122,6 +160,7 @@
         console.log(page); 
         sendButton.addEventListener('click',()=>{ sendAjax(e.target.value, type) });
     }
+      
       
       
     };
