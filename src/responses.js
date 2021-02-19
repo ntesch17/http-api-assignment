@@ -13,12 +13,6 @@ const respondJSON = (request, response, status, object, type) => {
     response.end();
   };
   const success = (request, response,params,acceptedTypes) => {
-    
-    
-    const responseJSON = {
-      message: 'Message: This is a successful response',
-  
-    };
     if(acceptedTypes[0] === 'text/xml'){
       let responseXML = '<response>';
       responseXML = `${responseXML} <message>Message: This is a successful response</message>`;
@@ -27,7 +21,13 @@ const respondJSON = (request, response, status, object, type) => {
   
       return respondJSON(request,response,200,responseXML,'text/xml');
     }
-    respondJSON(request, response, 200, responseJSON);
+    
+    const responseJSON = {
+      message: 'Message: This is a successful response',
+  
+    };
+    
+    respondJSON(request, response, 200, responseJSON,'application/json');
     return respondJSONMeta(request, response, 200);
   };
   

@@ -13,9 +13,9 @@
    const type2 = xhr.getResponseHeader('content-type');
       const content = document.querySelector('#content');
       const obj = JSON.parse(xhr.response);
-      console.log(type2);
+      console.log(type);
       
-      if(type2 === 'application/json'){
+      
       switch(xhr.status) {
         case 200: //if success
           content.innerHTML = `<b>Success!</b>`;
@@ -43,40 +43,17 @@
           break;
       }
       
+      if(type === 'application/json'){
       content.innerHTML += `<p>${obj.message}</p>`;
-    }
-    if(type2 === 'text/xml'){
-      switch(xhr.status) {
-        case 200: //if success
-          content.innerHTML = `<b>Success!</b>`;
-          break;
-        case 400: //if bad request
-          content.innerHTML = `<b>Bad Request!</b>`;
-          break;
-        case 401: //if unauthorized
-          content.innerHTML = `<b>Unauthorized!</b>`;
-          break;
-        case 403: //if forbidden
-          content.innerHTML = `<b>Forbidden!</b>`;
-          break;
-        case 501: //if not implemented
-          content.innerHTML = `<b>Not Implemented!</b>`;
-          break;
-        case 500: //if internal
-          content.innerHTML = `<b>Internal Error!</b>`;
-          break;
-          case 404: //if not found
-          content.innerHTML = `<b>Resource Not Found!</b>`;
-          break;
-        default: //any other status
-          content.innerHTML = `<b>Error code not implemented by client!</b>`;
-          break;
       }
-      
-      const message = xhr.response.querySelector('message');
-        const id = xhr.response.querySelector('id');
+    
+    else if(type === 'application/json'){
+      const message = xhr.responseXML.querySelector('message');
+        const id = xhr.responseXML.querySelector('id');
 
         content.innerHTML = `<b>${id}, ${message}</b>`;
+      }
+      
     //   switch(xhr.status) {
     //     case 200: //if success
         
@@ -128,7 +105,7 @@
     //       break;
     //   }
     //   content.innerHTML += `<p>${obj.responseXML}</p>`;
-    }
+    
     };
 
 
@@ -151,12 +128,12 @@
       const sendButton = document.querySelector("#send");
       
      
-      document.querySelector("#type").onchange = (e) => {
-        type = e.target.value;
-      }
+      
       
       document.querySelector('#page').onchange = (e) =>{
-       
+        document.querySelector("#type").onchange = (e) => {
+        type = e.target.value;
+      }
         console.log(page); 
         sendButton.addEventListener('click',()=>{ sendAjax(e.target.value, type) });
     }
