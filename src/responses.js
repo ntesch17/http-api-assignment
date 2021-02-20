@@ -3,116 +3,202 @@
 // Same when your heroku app shuts down from inactivity
 // We will be working with databases in the next few weeks.
 const respondJSON = (request, response, status, object, type) => {
-    response.writeHead(status, { 'Content-Type': type });
-    response.write(object);
-    response.end();
+  response.writeHead(status, { 'Content-Type': type });
+  response.write(object);
+  response.end();
+};
+
+const respondJSONMeta = (request, response, status, type) => {
+  response.writeHead(status, { 'Content-Type': type });
+  response.end();
+};
+const success = (request, response, params, acceptedTypes) => {
+  const responseJSON = {
+    message: 'Message: This is a successful response',
+    id: 'ID: Success',
+
   };
-  
-  const respondJSONMeta = (request, response, status, type) => {
-    response.writeHead(status, { 'Content-Type': type });
-    response.end();
+  if (acceptedTypes[0] === 'text/xml') {
+    let responseXML = '<response>';
+    responseXML = `${responseXML} <message>${responseJSON.message}</message>`;
+    responseXML = `${responseXML} <id>${responseJSON.id}</id>`;
+    responseXML = `${responseXML} </response>`;
+
+    respondJSON(request, response, 200, responseXML, 'text/xml');
+    return respondJSONMeta(request, response, 200, 'text/xml');
+  }
+
+  const res = JSON.stringify(responseJSON);
+  respondJSON(request, response, 200, res, 'application/json');
+  return respondJSONMeta(request, response, 200, 'application/json');
+};
+
+const badRequest = (request, response, params, acceptedTypes) => {
+  const responseJSON = {
+    message: 'Message: This request has the required parameters',
+    id: 'ID: badRequest',
   };
-  const success = (request, response,params,acceptedTypes) => {
-    const responseJSON = {
-      message: 'Message: This is a successful response',
-  
+  const res = JSON.stringify(responseJSON);
+
+  if (acceptedTypes[0] === 'text/xml') {
+    let responseXML = '<response>';
+    responseXML = `${responseXML} <message>${responseJSON.message}</message>`;
+    responseXML = `${responseXML} <id>${responseJSON.id}</id>`;
+    responseXML = `${responseXML} </response>`;
+
+    respondJSON(request, response, 200, responseXML, 'text/xml');
+    return respondJSONMeta(request, response, 200, 'text/xml');
+  }
+
+  if (!params.valid || params.valid !== 'true') {
+    const response1 = {
+      message: 'Message: Missing valid query parameter set equal to true.',
+      id: 'ID: badRequest',
     };
-    if(acceptedTypes[0] === 'text/xml'){
+
+    if (acceptedTypes[0] === 'text/xml') {
       let responseXML = '<response>';
-      responseXML = `${responseXML} <message>${responseJSON.message}</message>`;
-      responseXML = `${responseXML} <id>success</id>`;
+      responseXML = `${responseXML} <message>${response1.message}</message>`;
+      responseXML = `${responseXML} <id>${response1.id}</id>`;
       responseXML = `${responseXML} </response>`;
-  
-      return respondJSON(request,response,200,responseXML,'text/xml');
+      respondJSON(request, response, 400, responseXML, 'text/xml');
+      return respondJSONMeta(request, response, 400, 'text/xml');
     }
-    
-    
-    
-    respondJSON(request, response, 200, JSON.stringify(responseJSON),'application/json');
-    return respondJSONMeta(request, response, 200,'application/json');
+    const res2 = JSON.stringify(response1);
+    respondJSON(request, response, 400, res2, 'application/json');
+    return respondJSONMeta(request, response, 200, 'application/json');
+  }
+
+  respondJSON(request, response, 200, res, 'application/json');
+  return respondJSONMeta(request, response, 200, 'application/json');
+};
+
+const unauthorized = (request, response, params, acceptedTypes) => {
+  const responseJSON = {
+    message: 'Message: This request has the required loggedIn query parameter.',
+    id: 'ID: unauthorized',
   };
-  
-  const badRequest = (request, response, params, acceptedTypes) => {
-    const responseJSON = {
-      message: 'Message: This request has the required parameters',
+
+  const res = JSON.stringify(responseJSON);
+
+  if (acceptedTypes[0] === 'text/xml') {
+    let responseXML = '<response>';
+    responseXML = `${responseXML} <message>${responseJSON.message}</message>`;
+    responseXML = `${responseXML} <id>${responseJSON.id}</id>`;
+    responseXML = `${responseXML} </response>`;
+
+    respondJSON(request, response, 200, responseXML, 'text/xml');
+    return respondJSONMeta(request, response, 200, 'text/xml');
+  }
+  if (!params.loggedIn || params.loggedIn !== 'yes') {
+    const response1 = {
+      message: 'Message: Missing loggedIn query parameter set to yes.',
+      id: 'ID: unauthorized',
     };
-  
-    if (!params.valid || params.valid !== true) {
-      responseJSON.message = 'Message: Missing valid query parameter set equal to true.';
-      responseJSON.id = 'badRequest';
-  
-      respondJSON(request, response, 400, responseJSON);
-      return respondJSONMeta(request, response, 400);
+    if (acceptedTypes[0] === 'text/xml') {
+      let responseXML = '<response>';
+      responseXML = `${responseXML} <message>${response1.message}</message>`;
+      responseXML = `${responseXML} <id>${response1.id}</id>`;
+      responseXML = `${responseXML} </response>`;
+      respondJSON(request, response, 401, responseXML, 'text/xml');
+      return respondJSONMeta(request, response, 401, 'text/xml');
     }
-  
-    respondJSON(request, response, 200, responseJSON);
-    return respondJSONMeta(request, response, 200);
+    const res2 = JSON.stringify(response1);
+    respondJSON(request, response, 200, res2, 'application/json');
+    return respondJSONMeta(request, response, 200, 'application/json');
+  }
+
+  respondJSON(request, response, 200, res, 'application/json');
+  return respondJSONMeta(request, response, 200, 'application/json');
+};
+
+const forbidden = (request, response, params, acceptedTypes) => {
+  const responseJSON = {
+    message: 'Message: You do not have access to this content.',
+    id: 'ID: forbidden',
   };
-  
-  const unauthorized = (request, response,params,acceptedTypes) => {
-    const responseJSON = {
-      message: 'Message: This request has the required loggedIn query parameter.',
-    };
-  
-    if (!params.valid || params.valid !== true) {
-      responseJSON.message = 'Message: Missing loggedIn query parameter set to yes.';
-      responseJSON.id = 'unauthorized';
-  
-      respondJSON(request, response, 401, responseJSON);
-      return respondJSONMeta(request, response, 401);
-    }
-  
-    respondJSON(request, response, 200, responseJSON);
-    return respondJSONMeta(request, response, 200);
+
+  if (acceptedTypes[0] === 'text/xml') {
+    let responseXML = '<response>';
+    responseXML = `${responseXML} <message>${responseJSON.message}</message>`;
+    responseXML = `${responseXML} <id>${responseJSON.id}</id>`;
+    responseXML = `${responseXML} </response>`;
+
+    respondJSON(request, response, 403, responseXML, 'text/xml');
+    return respondJSONMeta(request, response, 403, 'text/xml');
+  }
+  const res = JSON.stringify(responseJSON);
+  respondJSON(request, response, 403, res, 'application/json');
+  return respondJSONMeta(request, response, 403, 'application/json');
+};
+
+const internal = (request, response, params, acceptedTypes) => {
+  const responseJSON = {
+    message: 'Message: Internal Server Error. Something went wrong.',
+    id: 'ID: internalError',
   };
-  
-  const forbidden = (request, response,params,acceptedTypes) => {
-    const responseJSON = {
-      message: 'Message: You do not have access to this content.',
-      id: 'forbidden',
-    };
-  
-    respondJSON(request, response, 403, responseJSON);
-    return respondJSONMeta(request, response, 403);
+  if (acceptedTypes[0] === 'text/xml') {
+    let responseXML = '<response>';
+    responseXML = `${responseXML} <message>${responseJSON.message}</message>`;
+    responseXML = `${responseXML} <id>${responseJSON.id}</id>`;
+    responseXML = `${responseXML} </response>`;
+
+    respondJSON(request, response, 500, responseXML, 'text/xml');
+    return respondJSONMeta(request, response, 500, 'text/xml');
+  }
+
+  const res = JSON.stringify(responseJSON);
+  respondJSON(request, response, 500, res, 'application/json');
+  return respondJSONMeta(request, response, 500, 'application/json');
+};
+
+const notImplemented = (request, response, params, acceptedTypes) => {
+  const responseJSON = {
+    message: 'Message: A get request for this page has not been implemented yet. Check again later for updated content.',
+    id: 'ID: notImplemented',
   };
-  
-  const internal = (request, response,params,acceptedTypes) => {
-    const responseJSON = {
-      message: 'Message: Internal Server Error. Something went wrong.',
-      id: 'internalError',
-    };
-  
-    respondJSON(request, response, 500, responseJSON);
-    return respondJSONMeta(request, response, 500);
+  if (acceptedTypes[0] === 'text/xml') {
+    let responseXML = '<response>';
+    responseXML = `${responseXML} <message>${responseJSON.message}</message>`;
+    responseXML = `${responseXML} <id>${responseJSON.id}</id>`;
+    responseXML = `${responseXML} </response>`;
+
+    respondJSON(request, response, 501, responseXML, 'text/xml');
+    return respondJSONMeta(request, response, 501, 'text/xml');
+  }
+
+  const res = JSON.stringify(responseJSON);
+  respondJSON(request, response, 501, res, 'application/json');
+  return respondJSONMeta(request, response, 501, 'application/json');
+};
+
+const notFound = (request, response, params, acceptedTypes) => {
+  const responseJSON = {
+    message: 'Message: The page you are looking for was not found.',
+    id: 'ID: notFound',
   };
-  
-  const notImplemented = (request, response,params,acceptedTypes) => {
-    const responseJSON = {
-      message: 'Message: A get request for this page has not been implemented yet. Check again later for updated content.',
-      id: 'notImplemented',
-    };
-  
-    respondJSON(request, response, 501, responseJSON);
-    return respondJSONMeta(request, response, 501);
-  };
-  
-  const notFound = (request, response) => {
-    const responseJSON = {
-      message: 'Message: The page you are looking for was not found.',
-      id: 'notFound',
-    };
-  
-    respondJSON(request, response, 404, responseJSON);
-    return respondJSONMeta(request, response, 404);
-  };
-  
-  module.exports = {
-    success,
-    badRequest,
-    notFound,
-    unauthorized,
-    forbidden,
-    internal,
-    notImplemented,
-  };
-  
+
+  if (acceptedTypes[0] === 'text/xml') {
+    let responseXML = '<response>';
+    responseXML = `${responseXML} <message>${responseJSON.message}</message>`;
+    responseXML = `${responseXML} <id>${responseJSON.id}</id>`;
+    responseXML = `${responseXML} </response>`;
+
+    respondJSON(request, response, 404, responseXML, 'text/xml');
+    return respondJSONMeta(request, response, 404, 'text/xml');
+  }
+
+  const res = JSON.stringify(responseJSON);
+  respondJSON(request, response, 404, res, 'application/json');
+  return respondJSONMeta(request, response, 404, 'application/json');
+};
+
+module.exports = {
+  success,
+  badRequest,
+  notFound,
+  unauthorized,
+  forbidden,
+  internal,
+  notImplemented,
+};

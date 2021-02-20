@@ -12,8 +12,9 @@
    
    const type2 = xhr.getResponseHeader('content-type');
       const content = document.querySelector('#content');
-      const obj = JSON.parse(xhr.response);
-      console.log(type);
+      const h1 = document.createElement('h1');
+      const p = document.createElement('p');
+      console.log(type2);
       
       
       switch(xhr.status) {
@@ -44,19 +45,22 @@
       }
       
       if(type2 === 'application/json'){
+        const obj = JSON.parse(xhr.response);
       content.innerHTML += `<p>${obj.message}</p>`;
+      content.innerHTML += `<p>${obj.id}</p>`;
       }
     
     else if(type2 === 'text/xml'){
       const h1 = document.createElement('h1');
       const p = document.createElement('p');
-      const message = xhr.responseXML.querySelector('response');
+      const message = xhr.responseXML.querySelector('message').textContent;
+      const id = xhr.responseXML.querySelector('id').textContent;
         //const id = xhr.responseXML.querySelector('id');
-        //h1.textContent = `${message}`;
-        content.innerHTML += message;
-       // p.textContent = `Age: ${age}`;
+        h1.textContent = `${message}`;
+       // content.innerHTML += message;
+        p.textContent = `${id}`;
       //console.log(message);
-       // content.appendChild(h1);
+        content.appendChild(h1);
         content.appendChild(p);
       }
       
@@ -140,7 +144,7 @@
         document.querySelector("#type").onchange = (e) => {
         type = e.target.value;
       }
-        console.log(page); 
+        //console.log(page); 
         sendButton.addEventListener('click',()=>{ sendAjax(e.target.value, type) });
     }
       
