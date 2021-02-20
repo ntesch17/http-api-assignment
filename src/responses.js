@@ -104,8 +104,8 @@ const unauthorized = (request, response, params, acceptedTypes) => {
       return respondJSONMeta(request, response, 401, 'text/xml');
     }
     const res2 = JSON.stringify(response1);
-    respondJSON(request, response, 200, res2, 'application/json');
-    return respondJSONMeta(request, response, 200, 'application/json');
+    respondJSON(request, response, 401, res2, 'application/json');
+    return respondJSONMeta(request, response, 401, 'application/json');
   }
 
   respondJSON(request, response, 200, res, 'application/json');
