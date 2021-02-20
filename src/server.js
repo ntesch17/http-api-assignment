@@ -26,8 +26,6 @@ const onRequest = (request, response) => {
   } else {
     urlStruct.notFound(request, response, params, acceptedTypes);
   }
-  // console.dir(parsedURL);
-  // console.dir(params);
 };
 
 http.createServer(onRequest).listen(port);
