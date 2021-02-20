@@ -43,15 +43,21 @@
           break;
       }
       
-      if(type === 'application/json'){
+      if(type2 === 'application/json'){
       content.innerHTML += `<p>${obj.message}</p>`;
       }
     
-    else if(type === 'application/json'){
-      const message = xhr.responseXML.querySelector('message');
-        const id = xhr.responseXML.querySelector('id');
-
-        content.innerHTML = `<b>${id}, ${message}</b>`;
+    else if(type2 === 'text/xml'){
+      const h1 = document.createElement('h1');
+      const p = document.createElement('p');
+      const message = xhr.responseXML.querySelector('response');
+        //const id = xhr.responseXML.querySelector('id');
+        //h1.textContent = `${message}`;
+        content.innerHTML += message;
+       // p.textContent = `Age: ${age}`;
+      //console.log(message);
+       // content.appendChild(h1);
+        content.appendChild(p);
       }
       
     //   switch(xhr.status) {

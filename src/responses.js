@@ -4,7 +4,7 @@
 // We will be working with databases in the next few weeks.
 const respondJSON = (request, response, status, object, type) => {
     response.writeHead(status, { 'Content-Type': type });
-    response.write(JSON.stringify(object));
+    response.write(object);
     response.end();
   };
   
@@ -13,22 +13,23 @@ const respondJSON = (request, response, status, object, type) => {
     response.end();
   };
   const success = (request, response,params,acceptedTypes) => {
+    const responseJSON = {
+      message: 'Message: This is a successful response',
+  
+    };
     if(acceptedTypes[0] === 'text/xml'){
       let responseXML = '<response>';
-      responseXML = `${responseXML} <message>Message: This is a successful response</message>`;
+      responseXML = `${responseXML} <message>${responseJSON.message}</message>`;
       responseXML = `${responseXML} <id>success</id>`;
       responseXML = `${responseXML} </response>`;
   
       return respondJSON(request,response,200,responseXML,'text/xml');
     }
     
-    const responseJSON = {
-      message: 'Message: This is a successful response',
-  
-    };
     
-    respondJSON(request, response, 200, responseJSON,'application/json');
-    return respondJSONMeta(request, response, 200);
+    
+    respondJSON(request, response, 200, JSON.stringify(responseJSON),'application/json');
+    return respondJSONMeta(request, response, 200,'application/json');
   };
   
   const badRequest = (request, response, params, acceptedTypes) => {
